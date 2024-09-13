@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment {
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-        binding.SpinnerMain.setonItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+        binding.SpinnerMain.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l){
 
                 String item = adapterView.getItemAtPosition(position).toString();
