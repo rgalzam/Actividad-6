@@ -1,9 +1,11 @@
 package com.tecmilenio.activity6.ui.gallery;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +20,7 @@ import java.util.Calendar;
 public class GalleryFragment extends Fragment {
 
     private FragmentGalleryBinding binding;
+    private int selectedYear, selectedMonth, selectedDay;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -35,21 +38,52 @@ public class GalleryFragment extends Fragment {
         binding.button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //String day, month, year;
-                long longDate = binding.calendarView2.getDate();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(longDate);
+                //Calcular la fecha de hoy
+                Calendar today = Calendar.getInstance();
+                int currentYear = today.get(Calendar.YEAR);
+                int currentMonth = today.get(Calendar.MONTH);
+                int currentDay = today.get(Calendar.DAY_OF_MONTH);
 
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                int month = calendar.get(Calendar.MONTH) + 1 ;
-                int year = calendar.get(Calendar.YEAR);
+                // Crear DatePickerDialog y establecer fecha de hoy como default
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        getContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                selectedYear = year;
+                                selectedMonth = month;
+                                selectedDay = dayOfMonth;
 
-                //SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                //String formattedDate = dateFormat.format(new Date(longDate));
-                //month = String.valueOf(binding.calendarView2.getMonth());
-                //year = String.valueOf(binding.calendarView2.getYear());
+                                Calendar today = Calendar.getInstance();
+                                int currentDay = today.get(Calendar.DAY_OF_MONTH);
+                                int currentMonth = today.get(Calendar.MONTH);
+                                int currentYear = today.get(Calendar.YEAR);
 
-                Toast.makeText(getContext(), day + "/" + month + "/" + year,Toast.LENGTH_SHORT).show();
+                                int ageYears = currentYear - selectedYear;
+
+                                int ageMonths = currentMonth - selectedMonth;
+
+                                if (ageMonths < 0) {
+                                    ageYears--;
+                                    ageMonths += 12; // Add 12 to the months to get the correct number
+                                }
+
+                                // Adjust the month if the current day is before the selected day in the current month
+                                if (currentDay < selectedDay) {
+                                    ageMonths--; // Subtract 1 month since the current day hasn't reached the birth day yet
+                                    if (ageMonths < 0) {
+                                        ageMonths += 12; // Adjust months if it becomes negative
+                                        ageYears--; // Also adjust years if necessary
+                                    }
+                                }
+                                
+                                Toast.makeText(getContext(), "Age: " + ageYears + " years and " + ageMonths + " months", Toast.LENGTH_SHORT).show();
+                            }
+                        },
+                        currentYear, currentMonth, currentDay);
+
+                // Show the DatePickerDialog
+                datePickerDialog.show();;
             }
         });
 
